@@ -1,0 +1,72 @@
+﻿@page "/customers"
+@inject ICustomerUiService CustomerUiService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Customers</PageTitle>
+
+<h3>Customer</h3>
+@if (CustomerUiService.Customer == null || CustomerUiService.Customer.Count<1 )
+{
+    <div class="spinner"></div>
+}
+else
+{
+    
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>City</th>
+            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in CustomerUiService.Customer)
+        {
+            <tr>
+                <td>@customer.Id</td>
+                <td>@customer.FirstName @customer.LastName</td>
+               
+                <td>@customer.Email</td>
+                <td>@customer.City</td>
+               
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => ShowCustomer(customer.Id))"><i class="oi oi-pencil"></i></button>
+                    <button class="btn btn-secondary" @onclick="(() => DeleteCustomer(customer.Id))"><i class="oi oi-delete"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="CreateNewCustomer">Create New Customer</button>
+
+}
+@code {
+    
+     protected override async Task OnInitializedAsync()
+    {
+      await Task.Run(loadCustomers);
+    }
+     async Task loadCustomers()
+    {
+         System.Threading.Thread.Sleep(2000);
+       await CustomerUiService.GetCustomers();
+    }
+    void ShowCustomer(long id)
+    {
+        NavigationManager.NavigateTo($"customerById/{id}");
+    }
+
+    void CreateNewCustomer()
+    {
+        NavigationManager.NavigateTo("/customerById");
+    }
+     async Task DeleteCustomer(long id)
+    {
+        await CustomerUiService.DeleteCustomer(id);
+    }
+}

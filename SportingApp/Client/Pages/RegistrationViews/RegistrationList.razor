@@ -1,0 +1,72 @@
+﻿@page "/registrations"
+@inject IRegistrationUiService RegistrationUiService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Registration</PageTitle>
+
+<h3>Registration</h3>
+
+
+@if (RegistrationUiService.Registrations == null ||RegistrationUiService.Registrations.Count<1 )
+{
+    <div class="spinner"></div>
+}
+else
+{
+    
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reg in RegistrationUiService.Registrations)
+        {
+            <tr>
+                <td>@reg.Id</td>
+                <td>@reg.Customer?.FirstName @reg.Customer?.LastName</td>
+                <td>@reg.Product?.Name</td>
+             
+               
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => ShowRegistration(reg.Id))"><i class="oi oi-pencil"></i></button>
+                    <button class="btn btn-secondary" @onclick="(() => DeleteRegistration(reg.Id))"><i class="oi oi-delete"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="CreateNewRegistration">Create New Registration</button>
+}
+@code {
+    
+    protected override async Task OnInitializedAsync()
+    {
+      await Task.Run(loadRegistration);
+    }
+     async Task loadRegistration()
+    {
+         System.Threading.Thread.Sleep(2000);
+         await RegistrationUiService.GetRegistrations();
+
+
+    }
+    void ShowRegistration(long id)
+    {
+        NavigationManager.NavigateTo($"registrationById/{id}");
+    }
+
+    void CreateNewRegistration()
+    {
+        NavigationManager.NavigateTo("/registrationById");
+    }
+     async Task DeleteRegistration(long id)
+    {
+        await RegistrationUiService.DeleteRegistration(id);
+    }
+}

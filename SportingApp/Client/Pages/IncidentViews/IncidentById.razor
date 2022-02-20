@@ -1,0 +1,137 @@
+﻿
+@page "/incidentById"
+@page "/incidentById/{id:int}"
+
+@inject IProductUiService ProductUiService
+@inject IIncidentUiService IncidentUiService
+@inject ICustomerUiService CustomerUiService
+@inject ITechnicianUiService TechnicianUiService
+@inject NavigationManager NavigationManager
+
+@if (Id == null)
+{
+    <PageTitle>Create a new Incident</PageTitle>
+    <h3>Create a new Incident</h3>
+}
+else
+{
+    <PageTitle>Edit @incident.Title</PageTitle>
+    <h3>Edit @incident.Title</h3>
+}
+
+<EditForm Model="@incident" OnValidSubmit="HandleSubmit">
+     <DataAnnotationsValidator />
+    <div>
+        <label>Select Customer</label><br />
+        <InputSelect @bind-Value="incident.CustomerId" class="form-select" @onblur="HandleCustomerChange">
+
+            @foreach (var customer in CustomerUiService.Customer)
+            {
+                <option value="@customer.Id">@customer.FirstName @customer.LastName</option>
+            }
+        </InputSelect>
+    </div>
+     <div>
+        <label>Select Product</label><br />
+        <InputSelect @bind-Value="incident.ProductId" class="form-select">
+            @foreach (var product in ProductUiService.Products)
+            {
+                <option value="@product.Id">@product.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <div>
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="incident.Title" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="description">Description</label>
+        <InputText id="description" @bind-Value="incident.Description" class="form-control"></InputText>
+    </div>
+    <div>
+        <label>Select Technician</label><br />
+        <InputSelect @bind-Value="incident.TechnicianId" class="form-select">
+            @foreach (var technician in TechnicianUiService.Technicians)
+            {
+                <option value="@technician.Id">@technician.FirstName @technician.FirstName@technician.LastName</option>
+            }
+        </InputSelect>
+    </div>
+      <div>
+        <label for="dateOpened">Date Opened</label>
+        <InputDate id="dateOpened" itemtype="Date"  @bind-Value="incident.DateOpened" class="form-control"></InputDate>
+    </div>
+     <div>
+        <label for="dateClosed">Date Closed</label>
+        <InputDate id="dateClosed" itemtype="Date"  @bind-Value="incident.DateClosed" class="form-control"></InputDate>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    <button type="button" class="btn btn-danger" @onclick="cancelSaveUpdate">Cancel</button>
+</EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    string btnText = string.Empty;
+
+    Incident incident = new Incident { Product = new Product() , Customer = new Customer() , Technician = new Technician() };
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        btnText = Id == null ? "Save" : "Update";
+        await CustomerUiService.GetCustomers();
+       // await ProductUiService.GetProducts();
+        await TechnicianUiService.GetTechnician();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == null)
+        {
+            //incident.Customer = CustomerUiService.Customer[0];
+            //incident.CustomerId = incident.Customer.Id;
+            //incident.Product = ProductUiService.Products[0];
+            //incident.ProductId = incident.Product.Id;
+            //incident.Technician = TechnicianUiService.Technicians[0];
+            //incident.TechnicianId = incident.Technician.Id;
+        }
+        else
+        {
+            incident = await IncidentUiService.GetIncidentById((int)Id);
+        }
+    }
+    async Task HandleCustomerChange()
+    {
+        await ProductUiService.GetProductsCustomerWise(incident.CustomerId);
+    }
+    async Task HandleSubmit()
+    {
+        try
+        {
+            if (Id == null)
+            {
+
+                await IncidentUiService.CreateIncident(incident);
+            }
+            else
+            {
+                await IncidentUiService.CreateIncident(incident);
+            }
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+
+       
+    }
+
+    void cancelSaveUpdate()
+    {
+        NavigationManager.NavigateTo("/incidents");
+    }
+}

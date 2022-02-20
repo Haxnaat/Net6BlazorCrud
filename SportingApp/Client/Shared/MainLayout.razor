@@ -1,0 +1,63 @@
+﻿@inherits LayoutComponentBase
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
+
+<div class="page">
+  @*  <div class="sidebar">
+        <NavMenu />
+    </div>
+*@
+    <main>
+        @*<div class="top-row px-4">
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        </div>*@
+        
+         <div class="top-row">
+           
+            <h3 class="linkColor">Sports Pro</h3>
+              @if (!string.IsNullOrEmpty(isLogin) && isLogin=="Admin")
+                            {
+                <a href="products" target="_self" class="linkColor">Products</a>
+                <a href="technicians" target="_self" class="linkColor">Technicians</a>
+                <a href="customers" target="_self" class="linkColor">Customers</a>
+                <a href="incidents" target="_self" class="linkColor">Incidents</a>
+                <a href="registrations" target="_self" class="linkColor">Registrations</a>
+                <div style="margin-left: 45%;">
+                  <a href="register" target="_self" class="linkColor">Register</a>
+                 <a href="" target="_self" class="linkColor" @onclick="Logout">Signout</a>
+                </div>
+            }
+            else
+            {
+                <a href="incidents" target="_self" class="linkColor">Incidents</a>
+                <div  style="margin-left: 75%;">
+                    <a href="" target="_self" class="linkColor" @onclick="Logout">Signout</a>
+
+                    </div>
+
+               
+                
+            }
+           
+        </div>
+        
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+@code {
+    string isLogin = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        isLogin = await localStorage.GetItemAsync<string>("Role");
+    }
+    async Task Logout()
+    {
+        await localStorage.ClearAsync();
+        NavigationManager.NavigateTo("/login");
+
+
+    }
+
+}

@@ -1,0 +1,31 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "8cf62d8d-3af8-478c-a7cc-efefe25ac492": {
+      "ProjectGuid": "8cf62d8d-3af8-478c-a7cc-efefe25ac492",
+      "DisplayName": "SportingApp.Server",
+      "ColorIndex": 0
+    },
+    "49da545f-c592-44fa-9a18-df8574eb6114": {
+      "ProjectGuid": "49da545f-c592-44fa-9a18-df8574eb6114",
+      "DisplayName": "SportingApp.Client",
+      "ColorIndex": 1
+    },
+    "25731faa-70a9-4cdc-824c-9ba903559577": {
+      "ProjectGuid": "25731faa-70a9-4cdc-824c-9ba903559577",
+      "DisplayName": "SportingApp.Shared",
+      "ColorIndex": 2
+    },
+    "1b4ec1ef-2960-4ffa-b999-6705a7da7038": {
+      "ProjectGuid": "1b4ec1ef-2960-4ffa-b999-6705a7da7038",
+      "DisplayName": "SportingApp.Data",
+      "ColorIndex": 3
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 4
+}

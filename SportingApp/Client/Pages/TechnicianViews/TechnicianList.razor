@@ -1,0 +1,70 @@
+﻿@page "/technicians"
+@inject ITechnicianUiService TechnicianUiService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Technicians</PageTitle>
+<h3>Technicians</h3>
+@if (TechnicianUiService.Technicians == null || TechnicianUiService.Technicians.Count<1 )
+{
+    <div class="spinner"></div>
+}
+else
+{
+    
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var technician in TechnicianUiService.Technicians)
+        {
+            <tr>
+                <td>@technician.Id</td>
+                <td>@technician.FirstName @technician.LastName</td>
+               
+                <td>@technician.Email</td>
+                <td>@technician.Phone</td>
+               
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => ShowTechnician(technician.Id))"><i class="oi oi-pencil"></i></button>
+                    <button class="btn btn-secondary" @onclick="(() => DeleteTechnician(technician.Id))"><i class="oi oi-delete"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="CreateNewTechnician">Create New Technician</button>
+}
+@code {
+   
+     protected override async Task OnInitializedAsync()
+    {
+      await Task.Run(loadTechnician);
+    }
+     async Task loadTechnician()
+    {
+         System.Threading.Thread.Sleep(2000);
+        await TechnicianUiService.GetTechnician();
+    }
+    void ShowTechnician(long id)
+    {
+        NavigationManager.NavigateTo($"technicianById/{id}");
+    }
+
+    void CreateNewTechnician()
+    {
+        NavigationManager.NavigateTo("/technicianById");
+    }
+     async Task DeleteTechnician(long id)
+    {
+        await TechnicianUiService.DeleteTechnician(id);
+    }
+}

@@ -1,0 +1,66 @@
+﻿@page "/register"
+@layout AuthLayout
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IAuthUiService AuthUiService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Register User</PageTitle>
+<EditForm Model="@user" OnValidSubmit="HandleSubmit">
+     <DataAnnotationsValidator />
+     <div>
+        <label for="firstName">First Name</label>
+        <InputText id="firstName"  @bind-Value="user.FirstName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="lastName">Last Name</label>
+        <InputText id="lastName" @bind-Value="user.LastName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="email">Email</label>
+        <InputText id="email"  @bind-Value="user.Email" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="user.Password" class="form-control" type="password"></InputText>
+    </div>
+    <div>
+        <label>Select Role</label><br />
+        <InputSelect @bind-Value="user.RoleId" class="form-select">
+            @foreach (var role in AuthUiService.Roles)
+            {
+                <option value="@role.Id">@role.RoleName</option>
+            }
+        </InputSelect>
+    </div>
+    
+    <br />
+    <button type="submit" class="btn btn-primary">Register</button>
+   
+</EditForm>
+
+
+
+
+@code {
+
+    UserDto user = new UserDto { Role = new Role() };
+    protected override async Task OnInitializedAsync()
+    {
+        
+        await AuthUiService.GetRoles();
+    }
+     async Task HandleSubmit()
+    {
+        try
+        {
+           await AuthUiService.Register(user);
+          
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+    }
+
+}

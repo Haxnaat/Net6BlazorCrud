@@ -1,0 +1,47 @@
+﻿@page "/dashboard"
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Dashboard</PageTitle>
+<h3>Sports Pro Technical Support</h3>
+
+<h5>Sports Management Software for the sports enthutiasts</h5>
+
+<table class="table table-striped table-bordered">
+    <thead>
+       @* <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            
+            <th></th>
+        </tr>*@
+    </thead>
+    <tbody>
+           @if (!string.IsNullOrEmpty(isLogin) && isLogin == "Admin")
+            {
+                <tr>  <td> <a href="products" target="_self" class="linkColor">Manage Products</a></td>    </tr>
+                <tr> <td> <a href="technicians" target="_self" class="linkColor">Manage Technicians</a></td></tr>
+                <tr><td> <a href="customers" target="_self" class="linkColor">Manage Customers</a></td></tr>
+               <tr><td> <a href="incidents" target="_self" class="linkColor">Manage Incidents</a></td></tr> 
+                <tr><td> <a href="registrations" target="_self" class="linkColor">Manage Registrations</a></td></tr>
+            }
+            else
+            {
+              <tr> <td> <a href="incidents" target="_self" class="linkColor">Manage Incidents</a></td></tr>
+            }
+            
+           
+      
+    </tbody>
+</table>
+
+@code {
+    string isLogin = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+            isLogin = await localStorage.GetItemAsync<string>("Role");
+    }
+
+}

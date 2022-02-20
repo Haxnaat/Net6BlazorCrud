@@ -1,0 +1,79 @@
+﻿@page "/incidents"
+
+@inject IIncidentUiService IncidentUiService
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Incidents</PageTitle>
+
+<h3>Incidents</h3>
+
+@if (IncidentUiService.Incidents == null || IncidentUiService.Incidents.Count<1 )
+{
+    <div class="spinner"></div>
+}
+else
+{
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th>Technician</th>
+            <th>Date Opened</th>
+            <th>Date Closed</th>
+            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var incident in IncidentUiService.Incidents)
+        {
+            <tr>
+                <td>@incident.Id</td>
+                <td>@incident.Title</td>
+                <td>@incident.Description</td>
+                <td>@incident.Customer?.FirstName @incident.Customer?.LastName</td>
+                <td>@incident.Product?.Name</td>
+                <td>@incident.Technician?.FirstName @incident.Technician?.LastName</td>
+                <td>@incident.DateOpened</td>
+                <td>@incident.DateClosed</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => ShowIncident(incident.Id))"><i class="oi oi-pencil"></i></button>
+                    <button class="btn btn-secondary" @onclick="(() => DeleteIncident(incident.Id))"><i class="oi oi-delete"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="CreateNewIncident">Create New Incident</button>
+}
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(loadIncidents);
+    }
+    async Task loadIncidents()
+    {
+         System.Threading.Thread.Sleep(2000);
+        await IncidentUiService.GetIncidents();
+    }
+    void ShowIncident(long id)
+    {
+        NavigationManager.NavigateTo($"incidentById/{id}");
+    }
+
+    void CreateNewIncident()
+    {
+        NavigationManager.NavigateTo("/incidentById");
+    }
+     async Task DeleteIncident(long id)
+    {
+        await IncidentUiService.DeleteIncident(id);
+    }
+}

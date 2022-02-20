@@ -1,0 +1,30 @@
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        @if(!string.IsNullOrEmpty(isLogin)){
+              <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        }
+        else
+        {
+             <RouteView RouteData="@routeData" DefaultLayout="@typeof(AuthLayout)" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        }
+
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+@code {
+    string isLogin = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+            isLogin = await localStorage.GetItemAsync<string>("UserToken");
+    }
+
+}

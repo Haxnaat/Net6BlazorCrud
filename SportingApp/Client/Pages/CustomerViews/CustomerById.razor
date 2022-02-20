@@ -1,0 +1,120 @@
+﻿@page "/customerById"
+@page "/customerById/{id:int}"
+
+@inject ICustomerUiService CustomerUiService
+@inject NavigationManager NavigationManager
+
+@if (Id == null)
+{
+    <PageTitle>Create a new Customer</PageTitle>
+    <h3>Create a new Customer</h3>
+}
+else
+{
+    <PageTitle>Edit @customer.FirstName</PageTitle>
+    <h3>Edit @customer.FirstName</h3>
+}
+
+<EditForm Model="@customer" OnValidSubmit="HandleSubmit">
+     <DataAnnotationsValidator />
+    <div>
+        <label for="firstname">First Name</label>
+        <InputText id="firstname"  @bind-Value="customer.FirstName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="lastname">Last Name</label>
+        <InputText id="lastname" @bind-Value="customer.LastName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="address">Address</label>
+        <InputText id="address" @bind-Value="customer.Address" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="city">City</label>
+        <InputText id="city" @bind-Value="customer.City" class="form-control"></InputText>
+    </div>
+     <div>
+        <label for="state">State</label>
+        <InputText id="state" @bind-Value="customer.State" class="form-control"></InputText>
+    </div>
+     <div>
+        <label for="postalCode">Postal Code</label>
+        <InputText id="postalCode" @bind-Value="customer.PostalCode" class="form-control"></InputText>
+    </div>
+    <div>
+        <label>Country</label><br />
+        <InputSelect @bind-Value="customer.CountryId" class="form-select">
+            @foreach (var country in CustomerUiService.Countries)
+            {
+                <option value="@country.Id">@country.Name</option>
+            }
+        </InputSelect>
+    </div>
+     <div>
+        <label for="email">Email</label>
+        <InputText id="email" itemtype="Email" @bind-Value="customer.Email" class="form-control"></InputText>
+    </div>
+     <div>
+        <label for="phone">Phone</label>
+        <InputText id="phone" @bind-Value="customer.Phone" class="form-control"></InputText>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    <button type="button" class="btn btn-danger" @onclick="cancelSaveUpdate">Cancel</button>
+</EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    string btnText = string.Empty;
+
+    Customer customer = new Customer { Country = new Country() };
+
+    protected override async Task OnInitializedAsync()
+    {
+        btnText = Id == null ? "Save" : "Update";
+        await CustomerUiService.GetCountries();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == null)
+        {
+            customer.Country = CustomerUiService.Countries[0];
+            customer.CountryId = customer.Country.Id;
+        }
+        else
+        {
+            customer = await CustomerUiService.GetCustomerById((int)Id);
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        try
+        {
+            if (Id == null)
+            {
+
+                await CustomerUiService.CreateCustomer(customer);
+            }
+            else
+            {
+                await CustomerUiService.CreateCustomer(customer);
+            }
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+
+       
+    }
+
+    void cancelSaveUpdate()
+    {
+        NavigationManager.NavigateTo("/customers");
+    }
+}

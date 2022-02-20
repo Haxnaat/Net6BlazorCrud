@@ -1,0 +1,78 @@
+﻿@page "/products"
+@inject IProductUiService ProductUiService
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Products</PageTitle>
+
+<h3>Products</h3>
+
+
+
+@if (ProductUiService.Products == null || ProductUiService.Products.Count<1 )
+{
+    <div class="spinner"></div>
+}
+else
+{
+    
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>ReleaseDate</th>
+            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in ProductUiService.Products)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.Code</td>
+                <td>@product.Name</td>
+               
+                <td>$ @product.Price</td>
+                <td>@product.ReleaseDate</td>
+               
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => ShowProduct(product.Id))"><i class="oi oi-pencil"></i></button>
+                    <button class="btn btn-secondary" @onclick="(() => DeleteProducts(product.Id))"><i class="oi oi-delete"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="CreateNewProduct">Create New Product</button>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+      await Task.Run(loadProducts);
+    }
+     async Task loadProducts()
+    {
+         System.Threading.Thread.Sleep(2000);
+          await ProductUiService.GetProducts();
+
+    }
+    void ShowProduct(long id)
+    {
+        NavigationManager.NavigateTo($"productById/{id}");
+    }
+
+    void CreateNewProduct()
+    {
+        NavigationManager.NavigateTo("/productById");
+    }
+     async Task DeleteProducts(long id)
+    {
+        await ProductUiService.DeleteProducts(id);
+    }
+}

@@ -1,0 +1,94 @@
+﻿@page "/technicianById"
+@page "/technicianById/{id:int}"
+
+@inject ITechnicianUiService TechnicianUiService
+@inject NavigationManager NavigationManager
+
+@if (Id == null)
+{
+    <PageTitle>Create a new Technician</PageTitle>
+    <h3>Create a new Technician</h3>
+}
+else
+{
+    <PageTitle>Edit @technician.FirstName</PageTitle>
+    <h3>Edit @technician.FirstName</h3>
+}
+
+<EditForm Model="@technician" OnValidSubmit="HandleSubmit">
+     <DataAnnotationsValidator />
+    <div>
+        <label for="firstname">First Name</label>
+        <InputText id="firstname"  @bind-Value="technician.FirstName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="lastname">Last Name</label>
+        <InputText id="lastname" @bind-Value="technician.LastName" class="form-control"></InputText>
+    </div>
+     <div>
+        <label for="email">Email</label>
+        <InputText id="email" itemtype="Email" @bind-Value="technician.Email" class="form-control"></InputText>
+    </div>
+     <div>
+        <label for="phone">Phone</label>
+        <InputText id="phone" @bind-Value="technician.Phone" class="form-control"></InputText>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    <button type="button" class="btn btn-danger" @onclick="cancelSaveUpdate">Cancel</button>
+</EditForm>
+
+
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    string btnText = string.Empty;
+
+    Technician technician = new Technician { };
+
+    protected override async Task OnInitializedAsync()
+    {
+        btnText = Id == null ? "Save" : "Update";
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == null)
+        {
+           //
+        }
+        else
+        {
+            technician = await TechnicianUiService.GetTechnicianById((int)Id);
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        try
+        {
+            if (Id == null)
+            {
+
+                await TechnicianUiService.CreateTechnician(technician);
+            }
+            else
+            {
+                await TechnicianUiService.CreateTechnician(technician);
+            }
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+
+       
+    }
+
+    void cancelSaveUpdate()
+    {
+        NavigationManager.NavigateTo("/technicians");
+    }
+}
